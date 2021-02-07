@@ -33,8 +33,8 @@ const getTheSpecifiedRGB = num => Math.round(num/8)*8-1 === -1 ? 0 : Math.round(
 
 const generatedColorFromBase = ([r, g, b]) => {
     const blackMin = [getTheSpecifiedRGB(r*0.1),getTheSpecifiedRGB(g*0.1),getTheSpecifiedRGB(b*0.1)]
-    const whiteMin = [getTheSpecifiedRGB(r*0.1+255*0.9),getTheSpecifiedRGB(r*0.1+255*0.9),getTheSpecifiedRGB(r*0.1+255*0.9)]
-    console.log(blackMin, whiteMin)
+    const whiteMin = [getTheSpecifiedRGB(r*0.1+229.5),getTheSpecifiedRGB(g*0.1+229.5),getTheSpecifiedRGB(b*0.1+229.5)]
+    console.log(blackMin, whiteMin ,r,g,b)
     return []
 }
 
