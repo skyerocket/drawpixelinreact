@@ -1,9 +1,10 @@
 import { colorPlate } from './ColorFactory'
 
 const drawing = []
+console.log(colorPlate['colorless'])
 
-colorPlate['red'].forEach(pixel => drawing.push(pixel))
-
-console.log(drawing)
+for (let key in colorPlate) {
+    colorPlate[key].forEach(pixel => drawing.push(pixel))
+}
 
 export { drawing }

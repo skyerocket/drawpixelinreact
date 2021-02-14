@@ -31,35 +31,148 @@ const range = (start,end) => new Array(Math.ceil((end - start)/8)+1).fill()
 
 const getTheSpecifiedRGB = num => Math.round(num/8)*8-1 === -1 ? 0 : Math.round(num/8)*8-1 // has to be 0, 7 , 15...
 
-const generatedColorFromBase = ([r, g, b]) => {
+const generatedColorFromBase = ([r, g, b], color) => {
     const blackMin = [getTheSpecifiedRGB(r*0.1),getTheSpecifiedRGB(g*0.1),getTheSpecifiedRGB(b*0.1)]
     const whiteMin = [getTheSpecifiedRGB(r*0.1+229.5),getTheSpecifiedRGB(g*0.1+229.5),getTheSpecifiedRGB(b*0.1+229.5)]
-    console.log(blackMin, whiteMin ,r,g,b)
-    return []
+
+    range(blackMin[0], r).forEach(i => {
+        if (i == g && g == b) {
+            colorPlate['colorless'].add(makeRGB(i,g,b))
+        } else {
+            colorPlate[color].add(makeRGB(i,g,b))
+        }
+    })
+
+    range(blackMin[1], g).forEach(j => {
+        if (r == j && j == b) {
+            colorPlate['colorless'].add(makeRGB(r,j,b))
+        } else {
+            colorPlate[color].add(makeRGB(r,j,b))
+        }
+    })
+
+    range(blackMin[2], b).forEach(k => {
+        if (r == g && g == k) {
+            colorPlate['colorless'].add(makeRGB(r,g,k))
+        } else {
+            colorPlate[color].add(makeRGB(r,g,k))
+        }
+    })
+
+    range(r,whiteMin[0]).forEach(i => {
+        if (i == g && g == b) {
+            colorPlate['colorless'].add(makeRGB(i,g,b))
+        } else {
+            colorPlate[color].add(makeRGB(i,g,b))
+        }
+    })
+
+    range(g, whiteMin[1]).forEach(j => {
+        if (r == j && j == b) {
+            colorPlate['colorless'].add(makeRGB(r,j,b))
+        } else {
+            colorPlate[color].add(makeRGB(r,j,b))
+        }
+    })
+
+    range(b, whiteMin[2]).forEach(k => {
+        if (r == g && g == k) {
+            colorPlate['colorless'].add(makeRGB(r,g,k))
+        } else {
+            colorPlate[color].add(makeRGB(r,g,k))
+        }
+    })
+
+    for (let i = blackMin[0]; i <= r; i+=8) {
+        for (let j = blackMin[1]; j <= g; j +=8) {
+            for (let k = blackMin[2]; k <= b; k += 8) {
+                if (i == j && j == k) {
+                    colorPlate['colorless'].add(makeRGB(i,j,k))
+                } else {
+                    colorPlate[color].add(makeRGB(i,j,k))
+                }
+            }
+        }
+    }
+
+    for (let i=r; i <= whiteMin[0]; i+=8) {
+        for (let j=g; j <= whiteMin[1]; j += 8) {
+            for (let k=b; k <= whiteMin[2]; k +=8) {
+                if (i == j && j == k) {
+                    colorPlate['colorless'].add(makeRGB(i,j,k))
+                } else {
+                    colorPlate[color].add(makeRGB(i,j,k))
+                }
+            }
+        }
+    }
 }
 
 const colorPlate = {
-    red : [],
-    orange: [],
-    yellow: [],
-    green: [],
-    blue: [],
-    purple: [],
-    colorless: [],
+    red : new Set(),
+    orange: new Set(),
+    yellow: new Set(),
+    green: new Set(),
+    blue: new Set(),
+    purple: new Set(),
+    colorless: new Set(),
 };
 
 // red : (255, 0-55, 0) and (255, 0, 0-120)
-console.log(range(0, 55))
 range(0, 55).forEach(i => {
-    colorPlate['red'].push(makeRGB(255, i, 0 ))
-    generatedColorFromBase([255, i, 0]).forEach(color => colorPlate['red'].push(color))
+    colorPlate['red'].add(makeRGB(255, i, 0 ))
+    generatedColorFromBase([255, i, 0], 'red')
 });
 range(0, 120).forEach(i => {
-    colorPlate['red'].push(makeRGB(255, 0, i ))
+    colorPlate['red'].add(makeRGB(255, 0, i ))
+    generatedColorFromBase([255, 0, i], 'red')
+})
+
+// orange : (255, 55-140, 0)
+range(55,140).forEach(i => {
+    colorPlate['orange'].add(makeRGB(255, i, 0 ))
+    generatedColorFromBase([255, i , 0], 'orange')
+})
+
+// yellow: (255, 140-255, 0) and (200-255, 255, 0)
+range(140,255).forEach(i => {
+    colorPlate['yellow'].add(makeRGB(255, i, 0))
+    generatedColorFromBase([255, i, 0], 'orange')
+})
+range(200,255).forEach(i => {
+    colorPlate['yellow'].add(makeRGB(i, 255, 0))
+    generatedColorFromBase([i, 255, 0], 'yellow')
+})
+
+// green: (0-200, 255,0) and (0, 255, 0-220)
+range(0,200).forEach(i => {
+    colorPlate['green'].add(makeRGB(i, 255, 0))
+    generatedColorFromBase([i, 255, 0], 'green')
+})
+range(0,220).forEach(i => {
+    colorPlate['green'].add(makeRGB(0, 255, i))
+    generatedColorFromBase([0, 255, i], 'green')
 })
 
 
-const colorValue = [...Array(256).keys()].reduce((acc, elem, i) => (i + 1 ) % 8 === 0 ? [...acc, elem] : acc, [0]).reverse()
-// [[255, 247, 239, 231, 223, 215, 207, 199, 191, 183, 175, 167, 159, 151, 143, 135, 127, 119, 111, 103, 95, 87, 79, 71, 63, 55, 47, 39, 31, 23, 15, 7, 0]]
+// blue: (0, 255, 220-255) and (0, 0-255, 255)
+range(220,255).forEach(i => {
+    colorPlate['blue'].add(makeRGB(0, 255, i))
+    generatedColorFromBase([0, 255, i], 'blue')
+})
+range(0,255).forEach(i => {
+    colorPlate['blue'].add(makeRGB(0, i, 255))
+    generatedColorFromBase([0, i, 255], 'blue')
+})
+
+// purple: (0-255, 0, 255) and (255, 0, 120 - 255)
+range(0,255).forEach(i => {
+    colorPlate['purple'].add(makeRGB(i, 0, 255))
+    generatedColorFromBase([i, 0, 255], 'purple')
+})
+range(120,255).forEach(i => {
+    colorPlate['purple'].add(makeRGB(255, 0, i))
+    generatedColorFromBase([255, 0, i], 'purple')
+})
 
 export { colorPlate }
