@@ -6,4 +6,4 @@
 
 localhost:3000
 
-![]('./screen.png')
+![](screen.png)
